@@ -1,0 +1,11 @@
+name: Static checks
+on: [push, pull_request]
+jobs:
+  source-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node -e "const s=require('node:fs').readFileSync('index.html','utf8');if(!s.toLowerCase().includes('<!doctype html>')||!s.includes('pixel-desk-art.png'))process.exit(1)"
