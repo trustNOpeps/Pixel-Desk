@@ -8,4 +8,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: node -e "const s=require('node:fs').readFileSync('index.html','utf8');if(!s.toLowerCase().includes('<!doctype html>')||!s.includes('pixel-desk-art.png'))process.exit(1)"
+      - name: Validate editor entry points
+        run: |
+          node -e "const fs=require('node:fs');const h=fs.readFileSync('index.html','utf8');const css=fs.readFileSync('styles.css','utf8');const selectors=['id=\"board\"','id=\"palette\"','id=\"grid\"','id=\"undo\"','id=\"redo\"'];if(!h.toLowerCase().includes('<!doctype html>')||!selectors.every(s=>h.includes(s))||!css.includes('.palette'))process.exit(1)"
+      - name: Validate JavaScript syntax
+        run: |
+          node --check app.mjs
+          node --check core.mjs
+      - name: Run editor unit tests
+        run: node --test core.test.mjs
